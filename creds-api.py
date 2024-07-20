@@ -21,12 +21,7 @@ class Credential(db.Model):
     def __repr__(self):
         return f"Credential(username={self.username}, password={self.password}, service={self.service})"
 
-# # Init the database
-# @app.before_first_request
-# def create_tables():
-#     db.create_all()
-
-# Init the database only once? (2)
+# Init the database only once
 with app.app_context():
     db.create_all()
 

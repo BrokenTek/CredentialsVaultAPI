@@ -15,3 +15,29 @@ wheels/
 share/python-wheels/
 .installed.cfg
 
+# Ignore personal database in instance folder
+instance/
+
+# Ignore logs
+*.log
+
+# Ignore environment file
+.env
+
+# Ignore database file
+db.sqlite3
+
+# Ignore python cache
+__pycache__/
+
+# Ignore IDE files
+.idea/
+.vscode/
+
+# Ignore test files
+tests/
+
+# Ignore coverage files
+htmlcov/
+.coverage
+.coverage.*
