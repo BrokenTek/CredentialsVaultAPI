@@ -1,0 +1,17 @@
+# Ignore virtual env dir
+venv/
+
+# Ignore distribution & packaging
+.Python
+build/
+dist/
+downloads/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+.installed.cfg
+
