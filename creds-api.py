@@ -1,6 +1,9 @@
 # Simple Python API for local use to retrieve credentials from an sqlite3 database - json output
 # Usage: python creds-api.py
 
+# TODO: Add more error handling and input validation
+# TODO: Find fix for running the script the first time (no users in db): Current workaround is to comment out the @app.login_required decorator for add_user
+
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
@@ -78,6 +81,7 @@ def get_users():
     users_list = [{"id":user.id, "username":user.username, "email":user.email} for user in users]
     return jsonify(users_list)
 
+# TODO: Fix bug stemming from @app.login_required
 # # Get user email by username
 # @app.route('/users/<string:username>', methods=['GET'])
 # @app.login_required
@@ -109,6 +113,14 @@ def delete_user(username):
         return jsonify({"message": "User deleted successfully!"})
     return jsonify({"message": "User not found!"}), 404
 
+# Check if user exists by username
+@app.route('/users/<string:username>', methods=['GET'])
+@auth.login_required
+def check_user(username):
+    user = User.query.filter_by(username=username).first()
+    if user:
+        return jsonify({"message": "True"})
+    return jsonify({"message": "False"})
 
 # CREDENTIAL API FUNCTIONALITY
 # Add new credential
@@ -129,7 +141,6 @@ def get_creds():
     creds_list = [{"id":cred.id, "username":cred.username, "password":cred.password, "service":cred.service} for cred in creds]
     return jsonify(creds_list)
 
-# TODO - Next methods different than convention learned **********************************************************************************************
 # Get credential by service
 @app.route('/creds/<string:service>', methods=['GET'])
 @auth.login_required

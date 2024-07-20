@@ -18,6 +18,10 @@ share/python-wheels/
 # Ignore personal database in instance folder
 instance/
 
+# Ignore configuration files
+config/
+config.json
+
 # Ignore logs
 *.log
 
