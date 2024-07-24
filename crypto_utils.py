@@ -47,13 +47,4 @@ def encrypt_password(password):
 
 def decrypt_password(encrypted_password):
     return cipher_suite.decrypt(encrypted_password.encode()).decode()
-
-
-conf = load_config()
-print(conf['cred_key'].encode())
-
-if "cred_key" not in conf or not conf['cred_key']:
-    print("No key")
-else:
-    print("Key exists")
     
