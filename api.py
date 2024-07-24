@@ -12,6 +12,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
 from crypto_utils import write_key, encrypt_password, decrypt_password
+from config_init import ensure_config
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///creds.db'
@@ -19,6 +20,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
+
+# If config/config.json does not exist, create it (empty)
+ensure_config()
 
 # If the key is not already written, write it
 write_key()
