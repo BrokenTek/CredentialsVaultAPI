@@ -11,6 +11,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
+from crypto_utils import write_key, encrypt_password, decrypt_password
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///creds.db'
@@ -18,6 +19,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
+
+# If the key is not already written, write it
+write_key()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -64,8 +68,14 @@ class User(db.Model):
 class Credential(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False)
-    password = db.Column(db.String(50), nullable=False)
+    password = db.Column(db.String(128), nullable=False)
     service = db.Column(db.String(80), nullable=False)
+
+    def set_password(self, password):
+        self.password = encrypt_password(password)
+
+    def get_password(self):
+        return decrypt_password(self.password)
 
     def __repr__(self):
         """
@@ -214,33 +224,35 @@ def add_cred():
         None
     """
     data = request.get_json()
-    new_cred = Credential(username=data['username'], password=data['password'], service=data['service'])
+    new_cred = Credential(username=data['username'], service=data['service'])
+    new_cred.set_password(data['password'])
     db.session.add(new_cred)
     db.session.commit()
     return jsonify({'message': "New credential added successfully!"}), 201
 
-@app.route('/creds', methods=['GET'])
-@auth.login_required
-def get_creds():
-    """
-    Retrieves a list of credentials from the database.
+# NOT CURRENTLY USED. DUMPa ALL CREDS DATA
+# @app.route('/creds', methods=['GET'])
+# @auth.login_required
+# def get_creds():
+#     """
+#     Retrieves a list of credentials from the database.
 
-    This route handler handles the 'GET' request to '/creds' endpoint. It requires the user to be authenticated using the `@auth.login_required` decorator.
+#     This route handler handles the 'GET' request to '/creds' endpoint. It requires the user to be authenticated using the `@auth.login_required` decorator.
 
-    Parameters:
-        None
+#     Parameters:
+#         None
 
-    Returns:
-        A JSON response containing a list of dictionaries, where each dictionary represents a credential.
-        Each dictionary contains the following keys:
-        - 'id' (int): The unique identifier of the credential.
-        - 'username' (str): The username associated with the credential.
-        - 'password' (str): The password associated with the credential.
-        - 'service' (str): The service name for which the credential is used.
-    """
-    creds = Credential.query.all()
-    creds_list = [{"id":cred.id, "username":cred.username, "password":cred.password, "service":cred.service} for cred in creds]
-    return jsonify(creds_list)
+#     Returns:
+#         A JSON response containing a list of dictionaries, where each dictionary represents a credential.
+#         Each dictionary contains the following keys:
+#         - 'id' (int): The unique identifier of the credential.
+#         - 'username' (str): The username associated with the credential.
+#         - 'password' (str): The password associated with the credential.
+#         - 'service' (str): The service name for which the credential is used.
+#     """
+#     creds = Credential.query.all()
+#     creds_list = [{"id":cred.id, "username":cred.username, "password":cred.get_password(), "service":cred.service} for cred in creds]
+#     return jsonify(creds_list)
 
 @app.route('/creds/<string:service>', methods=['GET'])
 @auth.login_required
@@ -265,7 +277,7 @@ def get_cred(service):
     """
     cred = Credential.query.filter_by(service=service).first()
     if cred:
-        return jsonify({"id":cred.id, "username":cred.username, "password":cred.password, "service":cred.service})
+        return jsonify({"id":cred.id, "username":cred.username, "password":cred.get_password(), "service":cred.service})
     return jsonify({"message": "Credential not found!"}), 404
 
 @app.route('/creds/<string:service>', methods=['PUT'])
@@ -285,7 +297,8 @@ def update_cred(service):
     if cred:
         data = request.get_json()
         cred.username = data['username']
-        cred.password = data['password']
+        # NEW CHANGED
+        cred.set_password(data['password'])
         db.session.commit()
         return jsonify({"message": "Credential updated successfully!"})
     return jsonify({"message": "Credential not found!"}), 404
