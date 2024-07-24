@@ -2,6 +2,10 @@
 
 import json
 from cryptography.fernet import Fernet
+from config_init import ensure_config
+
+# If config/config.json does not exist, create it (empty)
+ensure_config()
 
 CONFIG_FILE = 'config/config.json'
 
