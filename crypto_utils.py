@@ -1,50 +1,62 @@
 # For encrypting and decrypting passwords in the sqlite3 db file
 
+import os
 import json
 from cryptography.fernet import Fernet
-from config_init import ensure_config
 
-# If config/config.json does not exist, create it (empty)
-ensure_config()
-
-CONFIG_FILE = 'config/config.json'
+CONFIG_DIR = 'config/'
+CONFIG_FILE = 'config.json'
+CONFIG_PATH = CONFIG_DIR + CONFIG_FILE
 
 def keygen():
     return Fernet.generate_key()
 
-def load_config():
-    with open(CONFIG_FILE) as f:
-        return json.load(f)
+def is_file_empty(file_path):
+    with open(file_path, 'r') as f:
+        try:
+            # load json data
+            data = json.load(f)
+            # check if data is empty
+            return not bool(data) # evals to true if empty
+        except json.JSONDecodeError:
+            # consider the file to be empty
+            return True
+        
+def isConfigDir(file_path):
+    return os.path.exists(file_path)
+
+def isConfigFile(file_path):
+    return os.path.isfile(file_path)
+        
+def get_or_gen_key():
+    # if not os.path.exists(CONFIG_FILE):
+    if not isConfigDir(CONFIG_DIR):
+        os.makedirs(CONFIG_DIR)
+        print(f"Created directory: {CONFIG_DIR}")
+        
+    if not isConfigFile(CONFIG_PATH):
+        with open(CONFIG_PATH, 'w') as f:
+            json.dump({}, f, indent=4)
+            print(f"Created file: {CONFIG_FILE}")
     
-def save_config(config):
-    with open(CONFIG_FILE, 'w') as f:
-        json.dump(config, f)
-
-def write_key():
-    config = load_config()
-    if "cred_key" not in config or not config['cred_key']:
-        config['cred_key'] = keygen()
-        save_config(config)
-        # return False
-    # print("Failed to write key. Key already exists.")
-    # return True
+    if is_file_empty(CONFIG_PATH):
+        with open(CONFIG_PATH, 'w') as f:
+            json.dump({}, f, indent=4) 
+        
+    # Load config
+    with open(CONFIG_PATH) as f:
+        config = json.load(f)
     
-def load_key():
-    config = load_config()
-    if "cred_key" in config and config['cred_key']:
-        return config['cred_key'].encode()
-    print("Failed to load key. Key not found.")
-
-# Persistent key
-try:
-    key = load_key()
-    cipher_suite = Fernet(key)
-except TypeError as e:
-    print(f"Error loading key: {e}")
-
-def encrypt_password(password):
-    return cipher_suite.encrypt(password.encode()).decode()
-
-def decrypt_password(encrypted_password):
-    return cipher_suite.decrypt(encrypted_password.encode()).decode()
+    if 'cred_key' not in config or not config['cred_key']:  
+        # Append to config
+        key = keygen().decode()
+        config['cred_key'] = key
+        
+        with open(CONFIG_PATH, 'w') as f:
+            json.dump(config, f, indent=4)
+            
+        return key
+    
+    else:
+        return config['cred_key']
     

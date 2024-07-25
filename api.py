@@ -11,7 +11,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
 from werkzeug.security import generate_password_hash, check_password_hash
-from crypto_utils import write_key, encrypt_password, decrypt_password
+import config_init as ci
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///creds.db'
@@ -19,9 +19,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 auth = HTTPBasicAuth()
-
-# If the key is not already written, write it
-write_key()
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -72,10 +69,10 @@ class Credential(db.Model):
     service = db.Column(db.String(80), nullable=False)
 
     def set_password(self, password):
-        self.password = encrypt_password(password)
+        self.password = ci.encrypt_password(password)
 
     def get_password(self):
-        return decrypt_password(self.password)
+        return ci.decrypt_password(self.password)
 
     def __repr__(self):
         """

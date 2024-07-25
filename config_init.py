@@ -1,19 +1,24 @@
-# config_init.py is a snippet that initializes the config directory and config.json file if they do not exist. This snippet is useful for ensuring that the configuration directory and file are present before writing or reading configuration data. The snippet defines a function ensure_config() that creates the config directory and config.json file if they do not exist. The snippet can be used in scripts that require configuration data to ensure that the necessary configuration files are available.
+# 
 
-import os
-import json
+from crypto_utils import get_or_gen_key
+from cryptography.fernet import Fernet
 
-CONFIG_DIR = 'config'
-CONFIG_FILE = os.path.join(CONFIG_DIR, 'config.json')
+def init_key():
+    # Persistent key
+    try:
+        key = get_or_gen_key()
+        cipher_suite = Fernet(key)
+        print(f"Key loaded successfully!")
+        return cipher_suite
+    except TypeError as e:
+        print(f"Error loading key: {e}")
+        return None
+        
 
-def ensure_config():
-    # If config dir doesnt exist, create it
-    if not os.path.exists(CONFIG_DIR):
-        os.makedirs(CONFIG_DIR)
-        print("Created config directory.")
-    
-    # If config.json file doesnt exist, create it within config dir
-    if not os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, 'w') as f:
-            json.dump({}, f, indent=4)  # Create an empty JSON object
-        print("Created config.json file. Path: config/config.json")
+cipher_suite = init_key()
+
+def encrypt_password(password):
+    return cipher_suite.encrypt(password.encode()).decode()
+
+def decrypt_password(encrypted_password):
+    return cipher_suite.decrypt(encrypted_password.encode()).decode()

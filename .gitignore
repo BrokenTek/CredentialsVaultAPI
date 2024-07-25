@@ -45,3 +45,6 @@ tests/
 htmlcov/
 .coverage
 .coverage.*
+
+# Ignore personal notes
+notes/
