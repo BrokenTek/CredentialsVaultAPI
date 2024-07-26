@@ -227,7 +227,7 @@ def add_cred():
     db.session.commit()
     return jsonify({'message': "New credential added successfully!"}), 201
 
-# NOT CURRENTLY USED. DUMPa ALL CREDS DATA
+# NOT CURRENTLY USED. DUMPa ALL CREDS DATA. Not ideal.
 # @app.route('/creds', methods=['GET'])
 # @auth.login_required
 # def get_creds():

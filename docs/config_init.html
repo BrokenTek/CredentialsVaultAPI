@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Python: module config_init</title>
+</head><body>
+
+<table class="heading">
+<tr class="heading-text decor">
+</tr></table>
+    <p><span class="code">-&nbsp;Initialize&nbsp;the&nbsp;key&nbsp;for&nbsp;encryption&nbsp;and&nbsp;decryption&nbsp;of&nbsp;credential&nbsp;passwords.&nbsp;If&nbsp;the&nbsp;key&nbsp;is&nbsp;not&nbsp;found,&nbsp;a&nbsp;new&nbsp;key&nbsp;is&nbsp;generated.</span></p>
+<p>
+<table class="section">
+<tr class="decor functions-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Functions</strong></td></tr>
+    
+<tr><td class="decor functions-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><dl><dt><a name="-decrypt_password"><strong>decrypt_password</strong></a>(encrypted_password)</dt><dd><span class="code">Decrypts&nbsp;an&nbsp;encrypted&nbsp;password&nbsp;using&nbsp;the&nbsp;cipher&nbsp;suite.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;encrypted_password&nbsp;(str):&nbsp;The&nbsp;encrypted&nbsp;password&nbsp;to&nbsp;be&nbsp;decrypted.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str:&nbsp;The&nbsp;decrypted&nbsp;password.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;ValueError:&nbsp;If&nbsp;the&nbsp;encrypted&nbsp;password&nbsp;cannot&nbsp;be&nbsp;decrypted.</span></dd></dl>
+ <dl><dt><a name="-encrypt_password"><strong>encrypt_password</strong></a>(password)</dt><dd><span class="code">Encrypts&nbsp;a&nbsp;password&nbsp;using&nbsp;the&nbsp;cipher&nbsp;suite.<br>
+&nbsp;<br>
+Args:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;password&nbsp;(str):&nbsp;The&nbsp;password&nbsp;to&nbsp;be&nbsp;encrypted.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;str:&nbsp;The&nbsp;encrypted&nbsp;password.</span></dd></dl>
+ <dl><dt><a name="-init_key"><strong>init_key</strong></a>()</dt><dd><span class="code">Initializes&nbsp;the&nbsp;key&nbsp;for&nbsp;encryption&nbsp;and&nbsp;decryption&nbsp;of&nbsp;credential&nbsp;passwords.&nbsp;If&nbsp;the&nbsp;key&nbsp;is&nbsp;not&nbsp;found,&nbsp;a&nbsp;new&nbsp;key&nbsp;is&nbsp;generated.<br>
+&nbsp;<br>
+Returns:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;cipher_suite&nbsp;(Fernet):&nbsp;The&nbsp;cipher&nbsp;suite&nbsp;object&nbsp;used&nbsp;for&nbsp;encryption&nbsp;and&nbsp;decryption.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;None:&nbsp;If&nbsp;there&nbsp;is&nbsp;an&nbsp;error&nbsp;loading&nbsp;the&nbsp;key.<br>
+&nbsp;<br>
+Raises:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;TypeError:&nbsp;If&nbsp;there&nbsp;is&nbsp;an&nbsp;error&nbsp;loading&nbsp;the&nbsp;key.<br>
+&nbsp;<br>
+Prints:<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Key&nbsp;loaded&nbsp;successfully!:&nbsp;If&nbsp;the&nbsp;key&nbsp;is&nbsp;loaded&nbsp;successfully.<br>
+&nbsp;&nbsp;&nbsp;&nbsp;Error&nbsp;loading&nbsp;key:&nbsp;{e}:&nbsp;If&nbsp;there&nbsp;is&nbsp;an&nbsp;error&nbsp;loading&nbsp;the&nbsp;key.</span></dd></dl>
+</td></tr></table><p>
+<table class="section">
+<tr class="decor data-decor heading-text">
+<td class="section-title" colspan=3>&nbsp;<br><strong class="bigsection">Data</strong></td></tr>
+    
+<tr><td class="decor data-decor"><span class="code">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></td><td>&nbsp;</td>
+<td class="singlecolumn"><strong>cipher_suite</strong> = &lt;cryptography.fernet.Fernet object&gt;</td></tr></table>
+</body></html>
