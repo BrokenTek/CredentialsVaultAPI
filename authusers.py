@@ -14,7 +14,6 @@ from requests.auth import HTTPBasicAuth
 
 # API Endpoints/Constants
 BASE_URL = 'http://127.0.0.1:5000'    # For running locally. tmux is suggested for testing and usage!!
-# BASE_URL = 'http://192.168.1.192:5000'
 USERS_URL = f"{BASE_URL}/users"
 
 def load_credentials(config_file='config/config.json'):
