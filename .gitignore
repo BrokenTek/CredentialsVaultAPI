@@ -48,3 +48,9 @@ htmlcov/
 
 # Ignore personal notes
 notes/
+
+# Ignore playground
+playground/
+
+# Ignore files in data dir
+data/*

@@ -41,7 +41,7 @@ def is_file_empty(file_path):
             # consider the file to be empty
             return True
         
-def isConfigDir(file_path):
+def isDir(file_path):
     """
     Checks if a directory exists at the given file path.
 
@@ -53,7 +53,7 @@ def isConfigDir(file_path):
     """
     return os.path.exists(file_path)
 
-def isConfigFile(file_path):
+def isFile(file_path):
     """
     Checks if a file exists at the given file path.
 
@@ -89,11 +89,11 @@ def get_or_gen_key():
         str: A message indicating the creation of the configuration directory or file.
     """
     # if not os.path.exists(CONFIG_FILE):
-    if not isConfigDir(CONFIG_DIR):
+    if not isDir(CONFIG_DIR):
         os.makedirs(CONFIG_DIR)
         print(f"Created directory: {CONFIG_DIR}")
         
-    if not isConfigFile(CONFIG_PATH):
+    if not isFile(CONFIG_PATH):
         with open(CONFIG_PATH, 'w') as f:
             json.dump({}, f, indent=4)
             print(f"Created file: {CONFIG_FILE}")

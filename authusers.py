@@ -13,12 +13,12 @@ import requests
 from requests.auth import HTTPBasicAuth
 
 # API Endpoints/Constants
-BASE_URL = 'http://127.0.0.1:5000'    # For running locally. tmux is suggested for testing and usage!!
+BASE_URL = 'http://127.0.0.1:5000'    # For running locally on same physical machine. tmux is suggested for testing and usage!!
 USERS_URL = f"{BASE_URL}/users"
 
-def load_credentials(config_file='config/config.json'):
+def load_config(config_file='config/config.json'):
     """
-    Load credentials from a JSON configuration file.
+    Load config authentication credentials from a JSON configuration file.
 
     Args:
         config_file (str, optional): The path to the configuration file. Defaults to 'config/config.json'.
