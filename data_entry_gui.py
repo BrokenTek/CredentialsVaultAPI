@@ -14,15 +14,17 @@ def on_submit():
     service = service_entry.get().strip()
     username = username_entry.get().strip()
     password = password_entry.get().strip()
+    note = note_entry.get().strip()
     
     if not service or not username or not password:
         error_label.config(text="Please fill out each field")
     else:
-        add_credential(service, username, password, u, p)
+        add_credential(service, username, password, note, u, p)
         # clear fields
         service_entry.delete(0, tk.END)
         username_entry.delete(0, tk.END)
         password_entry.delete(0, tk.END)
+        note_entry.delete(0, tk.END)
 
 # main window init
 root = tk.Tk()
@@ -76,9 +78,14 @@ password_label.grid(row=4, column=0, pady=5)
 password_entry = tk.Entry(frame, font=entry_font, show="*")
 password_entry.grid(row=4, column=1, columnspan=2, pady=5)
 
+note_label = tk.Label(frame, text="Note", font=label_font)
+note_label.grid(row=5, column=0, pady=5)
+note_entry = tk.Entry(frame, font=entry_font)
+note_entry.grid(row=5, column=1, columnspan=2, pady=5)
+
 # submission btn created and placed
 submit_button = tk.Button(frame, text="Submit", font=button_font, command=on_submit)
-submit_button.grid(row=5, column=0, columnspan=3, pady=20)
+submit_button.grid(row=6, column=0, columnspan=3, pady=20)
 
 # additional padding placed at bottom of window
 frame.grid_rowconfigure(6, minsize=20)

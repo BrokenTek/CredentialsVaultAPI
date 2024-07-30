@@ -3,10 +3,11 @@
     - Usage: python creds-api.py - Running locally will open a Flask server on port 5000, accessible on LAN by host machine local IP address
 '''
 
-# TODO: Add more error handling and input validation
-# TODO: Find fix for running the script the first time (no users in db): Current workaround is to comment out the @app.login_required decorator for add_user
-# TODO: Add logging
+# TODO: (1) Add more error handling and input validation
+# TODO: (2) Find fix for running the script the first time (no users in db): Current workaround is to comment out the @app.login_required decorator for add_user > STARTED
+# TODO: (3) Add logging
 
+import os
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_httpauth import HTTPBasicAuth
@@ -67,6 +68,7 @@ class Credential(db.Model):
     username = db.Column(db.String(50), nullable=False)
     password = db.Column(db.String(128), nullable=False)
     service = db.Column(db.String(80), nullable=False)
+    note = db.Column(db.String(200), nullable=True)
 
     def set_password(self, password):
         self.password = ci.encrypt_password(password)
@@ -81,11 +83,23 @@ class Credential(db.Model):
         :return: A string representation of the Credential object with its username, password, and service.
         :rtype: str
         """
-        return f"Credential(username={self.username}, password={self.password}, service={self.service})"
+        return f"Credential(username={self.username}, password={self.password}, service={self.service}, note={self.note})"
 
+
+   
+# TODO: (2) Add the initial user to users database table on first script run
+# ADD INITIAL USER ON FIRST RUN   
+db_path = os.path.join(app.instance_path, 'creds.db')
+if not os.path.exists(db_path):
+    # stub
+    print("Creating initial user...")
+
+    
+    
+# Initialize the database
 with app.app_context():
     db.create_all()
-    
+ 
 @auth.verify_password
 def verify_password(username, password):
     """
@@ -221,7 +235,7 @@ def add_cred():
         None
     """
     data = request.get_json()
-    new_cred = Credential(username=data['username'], service=data['service'])
+    new_cred = Credential(username=data['username'], service=data['service'], note=data['note'])
     new_cred.set_password(data['password'])
     db.session.add(new_cred)
     db.session.commit()
@@ -274,7 +288,7 @@ def get_cred(service):
     """
     cred = Credential.query.filter_by(service=service).first()
     if cred:
-        return jsonify({"id":cred.id, "username":cred.username, "password":cred.get_password(), "service":cred.service})
+        return jsonify({"id":cred.id, "username":cred.username, "password":cred.get_password(), "service":cred.service, "note":cred.note})
     return jsonify({"message": "Credential not found!"}), 404
 
 @app.route('/creds/<string:service>', methods=['PUT'])
@@ -294,10 +308,30 @@ def update_cred(service):
     if cred:
         data = request.get_json()
         cred.username = data['username']
-        # NEW CHANGED
         cred.set_password(data['password'])
         db.session.commit()
         return jsonify({"message": "Credential updated successfully!"})
+    return jsonify({"message": "Credential not found!"}), 404
+
+@app.route('/creds/<string:service>/note', methods=['PUT'])
+@auth.login_required
+def set_note(service):
+    """
+    Updates or adds the note of a credential in the database based on the provided service name.
+
+    Parameters:
+        service (str): The name of the service for which the credential is to be updated.
+
+    Returns:
+        - If the credential is found and the note is updated successfully, a JSON response with a 'Note updated successfully!' message is returned.
+        - If the credential is not found, a JSON response with a 'Credential not found!' message and a status code of 404 is returned.
+    """
+    cred = Credential.query.filter_by(service=service).first()
+    if cred:
+        data = request.get_json()
+        cred.note = data['note']
+        db.session.commit()
+        return jsonify({"message": "Note updated successfully!"})
     return jsonify({"message": "Credential not found!"}), 404
 
 @app.route('/creds/<string:service>', methods=['DELETE'])

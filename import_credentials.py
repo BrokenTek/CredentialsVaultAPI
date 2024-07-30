@@ -2,18 +2,20 @@
 
 '''
 JSON format: Incrementing key with credential object data attributes key:value pairs as value
-{
-    "1": {
+[
+    {
         "username": "username1",
         "password": "password1",
-        "service": "service1"
+        "service": "service1",
+        "note": "note1"
         },
-    "2": {
+    {
         "username": "username2",
         "password": "password2",
-        "service": "service2"
+        "service": "service2",
+        "note": "note2"
         }
-}
+]
 '''
 
 import json
@@ -48,18 +50,23 @@ def load_credentials(file_path):
         
     credentials = []
     
-    # this assumes that each object contains all 3 data attributes (username, password, service)
-    for key in data:
-        credential = data[key]
-        username = credential.get('username', 'default_username')
-        password = credential.get('password', 'default_password')
-        service = credential.get('service')
-        
-        credentials.append({
-            'username': username,
-            'password': password,
-            'service': service
-        })
+    try:
+        # this assumes that each object contains all 3 data attributes (username, password, service)
+        for obj in data:
+            # credential = data[key]
+            username = obj.get('username', 'default_username')
+            password = obj.get('password', 'default_password')
+            service = obj.get('service')
+            note = obj.get('note', '')
+            
+            credentials.append({
+                'username': username,
+                'password': password,
+                'service': service,
+                'note': note
+            })
+    except:
+        print(f"\nError parsing JSON file: {file_path}\nNo data imported.\n")
 
     return credentials
 
@@ -83,7 +90,7 @@ def write_credentials(credential_list, username, password):
 
     try:
         for credential in credential_list:
-            add_credential(credential['service'], credential['username'], credential['password'], username, password)
+            add_credential(credential['service'], credential['username'], credential['password'], credential['note'], username, password)
         return True
     except:
         return False
@@ -110,7 +117,7 @@ def import_credentials(file_path):
     
     # feedback
     if success:
-        print("Credentials written to database successfully!")
+        print("\nCredentials written to database successfully!\n")
     else:
-        print("Error writing credentials to database.")
+        print("\nError writing credentials to database.\n")
     

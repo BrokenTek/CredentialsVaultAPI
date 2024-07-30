@@ -43,7 +43,7 @@ def check_service_exists(service, auth_username, auth_password):
     except requests.RequestException as e:
         print(f"Error checking service exists: {e}")
         
-def add_credential(service, username, password, auth_username, auth_password):
+def add_credential(service, username, password, note, auth_username, auth_password):
     """
     Adds a new credential to the credentials storage.
 
@@ -64,9 +64,10 @@ def add_credential(service, username, password, auth_username, auth_password):
     if check_service_exists(service, auth_username, auth_password):
         print(f"Service '{service}' already exists.")
         return
+    
     try:
         headers = {'Content-Type': 'application/json'}
-        post_credential_data = {'username': username, 'password': password, 'service': service}
+        post_credential_data = {'username': username, 'password': password, 'service': service, 'note': note}
         response = requests.post(f"{CREDENTIALS_URL}", headers=headers, data=json.dumps(post_credential_data), auth=HTTPBasicAuth(auth_username, auth_password))
         response.raise_for_status()    # Raise exception for 4xx and 5xx status codes
         result = response.json()
@@ -189,4 +190,18 @@ def update_credential(service, username, password, auth_username, auth_password)
         return result
     except requests.RequestException as e:
         print(f"Error updating credential: {e}")
+        
+def set_note(service, note, auth_username, auth_password):
+    if not check_service_exists(service, auth_username, auth_password):
+        print(f"Service '{service}' does not exist.")
+        return {"message": "Credential not found!"}
+    try:
+        headers = {'Content-Type': 'application/json'}
+        data = {'note': note}
+        response = requests.put(f"{CREDENTIALS_URL}/{service}/note", headers=headers, data=json.dumps(data), auth=HTTPBasicAuth(auth_username, auth_password))
+        response.raise_for_status()    # Raise exception for 4xx and 5xx status codes
+        result = response.json()
+        return result
+    except requests.RequestException as e:
+        print(f"Error setting note: {e}")
     
